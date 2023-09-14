@@ -73,7 +73,7 @@ def winner(board):
     Returns the winner of the game, if there is one.
     """
     # Want to check if all elements of a row are equal
-    for i in range(2):
+    for _ in range(2):
         # Check
         for row in board:
             # Convert to a set and check if only returns one element
@@ -95,11 +95,9 @@ def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    if winner(board):
+    if winner(board) or not player(board):
         return True
-    if not player(board):
-        return True
-
+    
 
 def utility(board):
     """
@@ -117,11 +115,20 @@ def utility(board):
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
-    """
+    """     
     turn = player(board)
+    moves = actions(board)
+    results=[]
+    for move in moves:
+        # For each action, store the result and 
+        move_result = result(board,move)
+        if terminal(move_result):
+            results.append((move, utility(move_result)))  
+        else: 
+            minimax(move_result)
+    
     if turn == X:
-        moves = actions(board)
-        for move in moves:
-            result(board,move)
-                 
-        
+        return max(results, key=lambda x: x[1])[0]
+    if turn == 0:
+        return min(results, key=lambda x: x[1])[0]
+    
