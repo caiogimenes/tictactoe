@@ -48,7 +48,7 @@ def actions(board):
         for j in range(3):
             if board[i][j] == EMPTY:
                 allowed.append((i,j))
-    
+                
     return allowed
 
 
@@ -58,13 +58,12 @@ def result(board, action):
     """
     i = action[0]
     j = action[1]
-    
-    if board[i][j] == EMPTY:  
+    if board[i][j] == EMPTY: 
         if player(board) == X:
-            board[i][j] == X
+            board[i][j] = X
             return board
         else:
-            board[i][j] == O
+            board[i][j] = O
             return board
 
 
@@ -72,22 +71,26 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    # Want to check if all elements of a row are equal
-    for _ in range(2):
-        # Check
-        for row in board:
-            # Convert to a set and check if only returns one element
-            if len(set(row)) == 1:
-                return row[0]
-        # Transpose the collumns to the rows
-        transposed = [[board[j][i] for j in range(3)] for i in range(3)]
-        board = transposed
+    # Check horizonal
+    for row in board:
+        # Convert to a set and check if only returns one element
+        if len(set(row)) == 1:
+            return row[0]
     # Check diagonals
     diagonals = [board[i][i] for i in range(3)]
     diagonals.append([board[i][2-i] for i in range(3)])
     for diagonal in diagonals:
-        if len(set(diagonal)) == 1:
+        if diagonal and len(set(diagonal)) == 1:
             return diagonal[0]
+    # Check vertical
+    # Transpose the collumns to the rows
+        transposed = [[board[j][i] for j in range(3)] for i in range(3)]
+        board = transposed  
+    for row in board:
+        # Convert to a set and check if only returns one element
+        if len(set(row)) == 1:
+            return row[0]     
+
     return None
 
 
@@ -115,7 +118,10 @@ def utility(board):
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
-    """     
+    """
+    print("IM HERE!!")
+    if terminal(board):
+        return None     
     turn = player(board)
     moves = actions(board)
     results=[]
@@ -123,12 +129,11 @@ def minimax(board):
         # For each action, store the result and 
         move_result = result(board,move)
         if terminal(move_result):
-            results.append((move, utility(move_result)))  
-        else: 
-            minimax(move_result)
+            results.append((move, utility(move_result)))
     
-    if turn == X:
+    if turn == X and len(results) > 0:
         return max(results, key=lambda x: x[1])[0]
-    if turn == 0:
+    if turn == 0 and len(results) > 0:
         return min(results, key=lambda x: x[1])[0]
-    
+    print(moves[0])
+    return moves[0]
