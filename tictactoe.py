@@ -84,8 +84,8 @@ def winner(board):
             return diagonal[0]
     # Check vertical
     # Transpose the collumns to the rows
-        transposed = [[board[j][i] for j in range(3)] for i in range(3)]
-        board = transposed  
+    transposed = [[board[j][i] for j in range(3)] for i in range(3)]
+    board = transposed  
     for row in board:
         # Convert to a set and check if only returns one element
         if len(set(row)) == 1:
@@ -119,21 +119,4 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    print("IM HERE!!")
-    if terminal(board):
-        return None     
-    turn = player(board)
-    moves = actions(board)
-    results=[]
-    for move in moves:
-        # For each action, store the result and 
-        move_result = result(board,move)
-        if terminal(move_result):
-            results.append((move, utility(move_result)))
     
-    if turn == X and len(results) > 0:
-        return max(results, key=lambda x: x[1])[0]
-    if turn == 0 and len(results) > 0:
-        return min(results, key=lambda x: x[1])[0]
-    print(moves[0])
-    return moves[0]
