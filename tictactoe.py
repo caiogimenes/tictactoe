@@ -23,22 +23,17 @@ def player(board):
     Returns player who has the next turn on a board.
     """
     countX = 0
-    countEmpty = 0    
+    countO = 0
     for row in board:
-        isX = row.count(X)
-        isEmpty = row.count(EMPTY)
-        countX += isX
-        countEmpty += isEmpty
+        for element in row:
+            if element == X:
+                countX+=1
+            if element == O:
+                countO+=1
+    if countX == 0 or countX < countO:
+        return X
     
-    if countEmpty == 0:
-        return None
-    
-    if countX % 2 == 0:
-        return O
-    
-    return X
-
-
+    return O
 def actions(board):
     """
     Returns set of all possible actions (i, j) available on the board.
@@ -56,6 +51,9 @@ def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
+    if not action:
+        return board
+    
     i = action[0]
     j = action[1]
     if board[i][j] == EMPTY: 
@@ -73,24 +71,23 @@ def winner(board):
     """
     # Check horizonal
     for row in board:
-        # Convert to a set and check if only returns one element
-        if len(set(row)) == 1:
+        if all(element == row[0] for element in row):
             return row[0]
-    # Check diagonals
-    diagonals = [board[i][i] for i in range(3)]
-    diagonals.append([board[i][2-i] for i in range(3)])
-    for diagonal in diagonals:
-        if diagonal and len(set(diagonal)) == 1:
-            return diagonal[0]
-    # Check vertical
-    # Transpose the collumns to the rows
-    transposed = [[board[j][i] for j in range(3)] for i in range(3)]
-    board = transposed  
+    # Check diagonal
+    diagonal, antidiagonal = set()
     for row in board:
-        # Convert to a set and check if only returns one element
-        if len(set(row)) == 1:
-            return row[0]     
-
+        for i in range(3):
+            diagonal.add(row[i][i])
+            antidiagonal.add(row[i][2-i]) 
+    if len(diagonal) == 1 or len(antidiagonal) == 1 and diagonal[1] is not EMPTY:
+        return diagonal[1]
+    # Check vertical
+    transposed = [[row[i] for row in board] for i in range(3)]
+    board = transposed
+    for row in board:
+        if all(element == row[0] for element in row):
+            return row[0]
+    
     return None
 
 
@@ -119,4 +116,16 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    
+    childs = [(result(board, action), action) for action in actions(board)]
+    statics = []
+    for child in childs:
+        if terminal(child):
+            statics.append(utility(child))
+        else:
+            statics.append(utility(result(board, minimax(child))))
+    if player(board) == X:        
+        max_static = max(statics)
+        return childs[childs.index(max_static)][1]
+    if player(board) == O:
+        min_static = min(statics)
+        return childs[childs.index(min_static)][1]
