@@ -2,8 +2,6 @@
 Tic Tac Toe Player
 """
 
-import math
-
 X = "X"
 O = "O"
 EMPTY = None
@@ -22,17 +20,16 @@ def player(board):
     """
     Returns player who has the next turn on a board.
     """
-    countX = 0
-    countO = 0
+    count_x = 0
+    count_o = 0
     for row in board:
         for element in row:
             if element == X:
-                countX+=1
+                count_x+=1
             if element == O:
-                countO+=1
-    if countX == 0 or countX < countO:
+                count_o+=1
+    if count_x == 0 or count_x <= count_o:
         return X
-    
     return O
 def actions(board):
     """
@@ -43,7 +40,6 @@ def actions(board):
         for j in range(3):
             if board[i][j] == EMPTY:
                 allowed.append((i,j))
-                
     return allowed
 
 
@@ -53,16 +49,13 @@ def result(board, action):
     """
     if not action:
         return board
+    if player(board) == X:
+        board[action[0]][action[1]] = X
+        return board
+    elif player(board) == O:
+        board[action[0]][action[1]] = O
+        return board
     
-    i = action[0]
-    j = action[1]
-    if board[i][j] == EMPTY: 
-        if player(board) == X:
-            board[i][j] = X
-            return board
-        else:
-            board[i][j] = O
-            return board
 
 
 def winner(board):
@@ -74,13 +67,15 @@ def winner(board):
         if all(element == row[0] for element in row):
             return row[0]
     # Check diagonal
-    diagonal, antidiagonal = set()
-    for row in board:
-        for i in range(3):
-            diagonal.add(row[i][i])
-            antidiagonal.add(row[i][2-i]) 
-    if len(diagonal) == 1 or len(antidiagonal) == 1 and diagonal[1] is not EMPTY:
-        return diagonal[1]
+    diagonal = []
+    antidiagonal = []
+    for i in range(3):
+        diagonal.append(board[i][i])
+        antidiagonal.append(board[i][2-i])
+    if all(element == diagonal[0] for element in diagonal):
+        return diagonal[0]
+    if all(element == antidiagonal[0] for element in antidiagonal):
+        return diagonal[0]
     # Check vertical
     transposed = [[row[i] for row in board] for i in range(3)]
     board = transposed
@@ -97,18 +92,16 @@ def terminal(board):
     """
     if winner(board) or not player(board):
         return True
-    
 
 def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    result = winner(board)
-    if result == O:
+    results = winner(board)
+    if results == O:
         return -1
-    if result == X:
+    if results == X:
         return 1
-    
     return 0
 
 
@@ -116,16 +109,30 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    childs = [(result(board, action), action) for action in actions(board)]
+    # TRUE ALGORITHM
+    # Childs represents the boards that results from possible moves
+    if terminal(board):
+        return None
+    moves = actions(board)
+    initial_board = [row[:] for row in board]
+    childs = []
     statics = []
+    for move in moves:
+        childs.append(result(initial_board, move))
+        initial_board = [row[:] for row in board]
+
     for child in childs:
         if terminal(child):
             statics.append(utility(child))
         else:
-            statics.append(utility(result(board, minimax(child))))
-    if player(board) == X:        
+            statics.append(utility(result(child, minimax(child))))
+    
+    if player(board) == X:
         max_static = max(statics)
-        return childs[childs.index(max_static)][1]
+        max_move = moves[statics.index(max_static)]
+        return max_move
+    
     if player(board) == O:
         min_static = min(statics)
-        return childs[childs.index(min_static)][1]
+        min_move = moves[statics.index(min_static)]
+        return min_move
