@@ -2,6 +2,8 @@
 Tic Tac Toe Player
 """
 
+from copy import deepcopy
+
 X = "X"
 O = "O"
 EMPTY = None
@@ -47,15 +49,15 @@ def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
+    new_board = deepcopy(board)
     if not action:
-        return board
+        return new_board
     if player(board) == X:
-        board[action[0]][action[1]] = X
-        return board
+        new_board[action[0]][action[1]] = X
+        return new_board
     elif player(board) == O:
-        board[action[0]][action[1]] = O
-        return board
-    
+        new_board[action[0]][action[1]] = O
+        return new_board   
 
 
 def winner(board):
@@ -75,7 +77,7 @@ def winner(board):
     if all(element == diagonal[0] for element in diagonal):
         return diagonal[0]
     if all(element == antidiagonal[0] for element in antidiagonal):
-        return diagonal[0]
+        return antidiagonal[0]
     # Check vertical
     transposed = [[row[i] for row in board] for i in range(3)]
     board = transposed
@@ -90,8 +92,9 @@ def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    if winner(board) or not player(board):
+    if winner(board) or len(actions(board)) == 0:
         return True
+    return False
 
 def utility(board):
     """
@@ -114,19 +117,18 @@ def minimax(board):
     if terminal(board):
         return None
     moves = actions(board)
-    initial_board = [row[:] for row in board]
     childs = []
     statics = []
     for move in moves:
-        childs.append(result(initial_board, move))
-        initial_board = [row[:] for row in board]
+        childs.append(result(board, move))
 
     for child in childs:
         if terminal(child):
             statics.append(utility(child))
         else:
             statics.append(utility(result(child, minimax(child))))
-    
+    if len(statics) == 0:
+        return None
     if player(board) == X:
         max_static = max(statics)
         max_move = moves[statics.index(max_static)]
