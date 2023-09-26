@@ -113,47 +113,17 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
+    """
+    THE OPTIMAL WAY IS THE ONE THAT HAS THE SHORTER LENGHT TO VICTORY!!!!!!!
+    """
     # TRUE ALGORITHM
     # Childs represents the boards that results from possible moves
     if terminal(board):
         return None
     
-    roots = [Node(move=action, terminal=False, utility=None, state=result(board, action), degree=0) for action in actions(board)]    
-    paths = []
-    
+    roots = [Node(action, False, result(board, action), None) for action in actions(board)]
+
     for root in roots:
-        path = []
         root.terminal = terminal(root.state)
-        path.append(root)
-        while root.terminal != True:
-            i =+ 1
-            state = result(root.state, root.move)
-            child = Node(move=minimax(root.state), terminal=terminal(state), utility=None, state=state, degree=i)
-            root = child
-            path.append(root)    
-        paths.append(path)
-        
-    paths_terminal = []
-    for path in paths:
-        for item in path:
-            if item.terminal == True:
-                paths_terminal.append(item)
-          
-    if player(board) == X:
-        ref_state = max(paths_terminal, key=lambda n: n.utility)
-
-    if player(board) == O:
-        ref_state = min(paths_terminal, key=lambda n: n.utility)
-
-    best_paths = []
-    for path in paths_terminal:
-        
-    
-    optimal_path = min(paths, key=lambda n: len(n))
-    optimal_move = optimal_path[0].move
-    
-    return optimal_move
-        
-    """
-    THE OPTIMAL WAY IS THE ONE THAT HAS THE SHORTER LENGHT TO VICTORY!!!!!!!
-    """
+        while root.terminal is not True:
+            
