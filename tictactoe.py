@@ -3,6 +3,7 @@ Tic Tac Toe Player
 """
 
 from copy import deepcopy
+from utils import Node
 
 X = "X"
 O = "O"
@@ -116,25 +117,43 @@ def minimax(board):
     # Childs represents the boards that results from possible moves
     if terminal(board):
         return None
-    moves = actions(board)
-    childs = []
-    statics = []
-    for move in moves:
-        childs.append(result(board, move))
-
-    for child in childs:
-        if terminal(child):
-            statics.append(utility(child))
-        else:
-            statics.append(utility(result(child, minimax(child))))
-    if len(statics) == 0:
-        return None
-    if player(board) == X:
-        max_static = max(statics)
-        max_move = moves[statics.index(max_static)]
-        return max_move
     
+    roots = [Node(move=action, terminal=False, utility=None, state=result(board, action), degree=0) for action in actions(board)]    
+    paths = []
+    
+    for root in roots:
+        path = []
+        root.terminal = terminal(root.state)
+        path.append(root)
+        while root.terminal != True:
+            i =+ 1
+            state = result(root.state, root.move)
+            child = Node(move=minimax(root.state), terminal=terminal(state), utility=None, state=state, degree=i)
+            root = child
+            path.append(root)    
+        paths.append(path)
+        
+    paths_terminal = []
+    for path in paths:
+        for item in path:
+            if item.terminal == True:
+                paths_terminal.append(item)
+          
+    if player(board) == X:
+        ref_state = max(paths_terminal, key=lambda n: n.utility)
+
     if player(board) == O:
-        min_static = min(statics)
-        min_move = moves[statics.index(min_static)]
-        return min_move
+        ref_state = min(paths_terminal, key=lambda n: n.utility)
+
+    best_paths = []
+    for path in paths_terminal:
+        
+    
+    optimal_path = min(paths, key=lambda n: len(n))
+    optimal_move = optimal_path[0].move
+    
+    return optimal_move
+        
+    """
+    THE OPTIMAL WAY IS THE ONE THAT HAS THE SHORTER LENGHT TO VICTORY!!!!!!!
+    """
