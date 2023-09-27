@@ -1,4 +1,3 @@
-
 class Node():
     def __init__(self, move, state):
         self.move = move
@@ -6,17 +5,14 @@ class Node():
 
 class Path():
     def __init__(self):
-        self.path = []
-        self.utility = []
+        self.nodes = []
+        self.utility = None
     
     def add_node(self, node):
-        self.path.append(node)
-    
-    def remove_node(self, node):
-        self.path.remove(node)
-    
+        self.nodes.append(node)
+        
     def end_node(self):
-        return self.path[len(self.path) - 1]
+        return self.nodes[len(self.nodes) - 1]
     
     def degree(self):
-        return len(self.path)
+        return len(self.nodes)
