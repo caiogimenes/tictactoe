@@ -3,7 +3,7 @@ Tic Tac Toe Player
 """
 
 from copy import deepcopy
-from utils import Node
+from utils import Node, Path
 
 X = "X"
 O = "O"
@@ -121,9 +121,37 @@ def minimax(board):
     if terminal(board):
         return None
     
-    states = [result(board, action) for action in actions(board)]
-    degree = len(states)
-    front = []
-    for state in states:
-        if terminal(state) == True:
-            
+    nodes = [Node(action, result(board, action)) for action in actions(board)]
+    paths = []
+    for node in nodes:
+        path = Path()
+        path.add_node(node)
+        while terminal(node.state) is False:
+            move = minimax(node.state)
+            next_node = Node(move, result(node.state, move))
+            path.add_node(next_node)
+            node = next_node
+        path.add_node(node)
+        path.utility = utility(path.end_node().state)
+        paths.append(path)
+    
+    if len(paths) == 1:
+        return path.end_node().move
+    
+    if player(board) == X:
+        maximizer = max(paths, key=lambda x: x.utility)    
+        for path in paths:
+            if path.utility < maximizer.utility:
+                paths.remove(path)
+        optimal = min(paths, key=lambda x: x.degree())
+        
+        return optimal.end_node().move
+
+    if player(board) == O:
+        minimizer = min(paths, key=lambda x: x.utility)    
+        for path in paths:
+            if path.utility > minimizer.utility:
+                paths.remove(path)
+        optimal = min(paths, key=lambda x: x.degree())
+        
+        return optimal.end_node().move
