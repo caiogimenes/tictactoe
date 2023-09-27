@@ -121,9 +121,9 @@ def minimax(board):
     if terminal(board):
         return None
     
-    roots = [Node(action, False, result(board, action), None) for action in actions(board)]
-
-    for root in roots:
-        root.terminal = terminal(root.state)
-        while root.terminal is not True:
+    states = [result(board, action) for action in actions(board)]
+    degree = len(states)
+    front = []
+    for state in states:
+        if terminal(state) == True:
             
