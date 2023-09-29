@@ -119,6 +119,9 @@ def minimax(board):
     if terminal(board):
         return None
     
+    alpha = float('inf')
+    beta = float('-inf')
+    
     nodes = [Node(action, result(board, action)) for action in actions(board)]
     paths = []
     for node in nodes:
@@ -127,37 +130,29 @@ def minimax(board):
         # Add node to path
         path.add_node(node)
         # Create the path until terminal node is reached
-        while terminal(node.state) is False:
-            move = minimax(node.state)
-            next_node = Node(move, result(node.state, move))
+        end_node = node
+        while terminal(end_node.state) is False:
+            move = minimax(end_node.state)
+            next_node = Node(move, result(end_node.state, move))
             path.add_node(next_node)
-            node = next_node
-        path.add_node(node)
+            end_node = next_node
+        path.add_node(end_node)
         # Get utility of the path last node
         path.utility = utility(path.end_node().state)
         # Register the path in paths list
         paths.append(path)
+
     
-    
-    if player(board) == X:
-        maximizer = max(paths, key=lambda x: x.utility)    
-        optimal_paths = [path for path in paths if path.utility >= maximizer.utility]                     
+    if player(board) == O:
+        maximizer = max(paths, key=lambda x: x.utility)  
+        optimal_paths = [path for path in paths if path.utility == maximizer.utility]
         optimal = min(optimal_paths, key=lambda x: x.degree())
         
         return optimal.end_node().move
 
-    if player(board) == O:
+    if player(board) == X:
         minimizer = min(paths, key=lambda x: x.utility)
-        # print("MINIMIZER: ", minimizer.utility)   
-        # for path in paths:
-            # print("UTILITY: ", path.utility)
-            # print("MOVE: ", path.end_node().move)
-        optimal_paths = [path for path in paths if path.utility <= minimizer.utility]
-        # print("*******************************")
-        # for path in optimal_paths:
-            # print("UTILITY: ", path.utility)
-            # print("MOVE: ", path.end_node().move)
-        # print("=====================================")       
+        optimal_paths = [path for path in paths if path.utility == minimizer.utility]
         optimal = min(optimal_paths, key=lambda x: x.degree())
         
         return optimal.end_node().move
