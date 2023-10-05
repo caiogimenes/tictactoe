@@ -3,6 +3,7 @@ Tic Tac Toe Player
 """
 
 from copy import deepcopy
+from utils import Node
 
 X = "X"
 O = "O"
@@ -123,14 +124,17 @@ def minimax(board):
     if terminal(board):
         return None
     
-    alpha = float('-inf')
-    beta = float('+float')
+    moves = [Node(move=action) for action in actions(board)]   
     
-    for move in actions(board):
-        new_board = result(board, move)
+    for move in moves:
+        new_board = result(board, move.move)
         if terminal(new_board):
-            score = utility(new_board)
-            if player(new_board) == X:
-                maximizer(score, alpha, beta)
-            if player(new_board) == O:
-                minimizer(score, alpha, beta)
+            move.utility = utility(new_board)  
+        else:
+            move.utility = utility(result(new_board, minimax(new_board)))
+    
+    if player(new_board) == X:
+        return max(moves, key=lambda x: x.utility).move
+    
+    if player(new_board) == O:
+        return min(moves, key=lambda x: x.utility).move
