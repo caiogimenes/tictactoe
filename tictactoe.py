@@ -108,11 +108,6 @@ def utility(board):
         return 1
     return 0
 
-def maximizer(score, alpha, beta):
-    return
-def minimizer(score, alpha, beta):
-    return
-
 
 def minimax(board):
     """
@@ -124,17 +119,9 @@ def minimax(board):
     if terminal(board):
         return None
     
-    moves = [Node(move=action) for action in actions(board)]   
+    moves = actions(board) 
     
     for move in moves:
-        new_board = result(board, move.move)
-        if terminal(new_board):
-            move.utility = utility(new_board)  
-        else:
-            move.utility = utility(result(new_board, minimax(new_board)))
-    
-    if player(new_board) == X:
-        return max(moves, key=lambda x: x.utility).move
-    
-    if player(new_board) == O:
-        return min(moves, key=lambda x: x.utility).move
+        state = result(board, move)
+        if terminal(state):
+            
