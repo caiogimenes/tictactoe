@@ -121,7 +121,26 @@ def minimax(board):
     
     moves = actions(board) 
     
-    for move in moves:
-        state = result(board, move)
-        if terminal(state):
-            
+    if player(board) == X:
+        max_value = float('-inf')
+        max_move = None
+        for move in moves:
+            state = result(board, move)
+            if terminal(state):
+                score = utility(state)
+                if utility(state) > max_value:
+                    max_value = score
+                    max_move = move
+        return max_move
+    
+    if player(board) == O:
+        min_value = float('inf')
+        min_move = None
+        for move in moves:
+            state = result(board, move)
+            if terminal(state):
+                score = utility(state)
+                if utility(state) > min_value:
+                    min_value = score
+                    min_move = move
+        return min_move
