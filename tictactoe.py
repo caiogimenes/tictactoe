@@ -112,9 +112,6 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    """
-    THE OPTIMAL WAY IS THE ONE THAT HAS THE SHORTER LENGHT TO VICTORY!!!!!!!
-    """
     if terminal(board):
         return None
     
