@@ -116,43 +116,41 @@ def minimax(board):
         return None
     
     moves = actions(board)
+    # Keep track of max or min value of the move
     max_value = float('-inf')
     min_value = float('inf')
     
+    # Max player
     if player(board) == X:
         max_move = None
         for move in moves:
             state = result(board, move)
-            if terminal(state):
-                score = utility(state)
-                if score > max_value:
-                    max_value = score
-                    max_move = move
-            else:    
-                while terminal(state) is False:
-                    state = result(state, minimax(state))
-                score = utility(state)
-                if score > max_value:
-                    max_value = score
-                    max_move = move
+            # Set condition for a recursive call of minimax   
+            while terminal(state) is False:
+                state = result(state, minimax(state))
+            score = utility(state)
+            if score > max_value:
+                max_value = score
+                max_move = move
+            # Little optimization
+            if min(max_value, 1) == 1:
+                return max_move
         return max_move
     
+    # Min player
     if player(board) == O:
         min_move = None
         for move in moves:
             state = result(board, move)
-            if terminal(state):
-                score = utility(state)
-                if score < min_value:
-                    min_value = score
-                    min_move = move
-            else:
-                while terminal(state) is False:
-                    state = result(state, minimax(state))
-                score = utility(state)
-                if score < min_value:
-                    min_value = score
-                    min_move = move
+            # Set condition for a recursive call of minimax
+            while terminal(state) is False:
+                state = result(state, minimax(state))
+            score = utility(state)
+            if score < min_value:
+                min_value = score
+                min_move = move
+            # Little optimization
+            if max(min_value, -1) == -1:
+                return min_move
         return min_move
-    
     
