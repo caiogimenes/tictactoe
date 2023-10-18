@@ -118,10 +118,11 @@ def minimax(board):
     if terminal(board):
         return None
     
-    moves = actions(board) 
+    moves = actions(board)
+    max_value = float('-inf')
+    min_value = float('inf')
     
     if player(board) == X:
-        max_value = float('-inf')
         max_move = None
         for move in moves:
             state = result(board, move)
@@ -140,7 +141,6 @@ def minimax(board):
         return max_move
     
     if player(board) == O:
-        min_value = float('inf')
         min_move = None
         for move in moves:
             state = result(board, move)
