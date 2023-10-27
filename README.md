@@ -5,7 +5,7 @@ This repository provides an AI player for the classic game of Tic Tac Toe. The A
 ## Dependencies
 
 - Python 3.x
-- The `runner.py` file from the [CS50's Introduction to Artificial Intelligence with Python](https://cs50.harvard.edu/ai/2020/) course by Harvard University.
+- The `runner.py` file from the [CS50's Introduction to Artificial Intelligence with Python](https://cs50.harvard.edu/ai/2023/) course by Harvard University.
 
 ## Usage
 
