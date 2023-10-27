@@ -11,7 +11,7 @@ This repository provides an AI player for the classic game of Tic Tac Toe. The A
 
 1. Clone the repository to your local machine.
 ```bash
-git clone https://github.com/yourusername/tic-tac-toe.git
+git clone https://github.com/caiogimenes/tic-tac-toe.git
 cd tic-tac-toe
 ```
 
