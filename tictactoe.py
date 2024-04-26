@@ -57,14 +57,14 @@ def result(board, action):
 def winner(board):
     """
     Returns the winner of the game, if there is one.
-    """     
-    central = board[1][1]
-    
+    """
+    # Horizontal
     for i in range(3):
-        for j in range(3):
-            if board[i][j] == central:    
-                
-    return
+        if all(board[0][i]==board[j][0] != None for j in range(3)):
+            return board[i][0]
+        if all(board[i][0]==board[][0] )
+        
+        
 
 def terminal(board):
     """
