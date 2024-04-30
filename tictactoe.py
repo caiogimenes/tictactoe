@@ -98,6 +98,30 @@ def utility(board):
         return -1
     else:
         return 0
+    
+def max_value(board):
+    if terminal(board):
+        return (utility(board), '')
+    v = (float('-inf'), '')
+    for action in actions(board):
+        new_board = result(board, action)
+        v_temp = max(v, min_value(new_board)[0], key=lambda x: x[0])
+        if v_temp != v:
+            v = (v_temp, action)
+    
+    return v
+    
+def min_value(board):
+    if terminal(board):
+        return (utility(board), '')
+    v = (float('inf'), '')
+    for action in actions(board):
+        new_board = result(board, action)
+        v_temp = min(v, max_value(new_board)[0], key=lambda x: x[0])
+        if v_temp != v:
+            v = (v_temp, action)
+    
+    return v
 
 def minimax(board):
     """
@@ -107,17 +131,12 @@ def minimax(board):
         return None
     
     turn = player(board)
-    moves = actions(board)
-    states = []
-    
-    for move in moves:
-        new_board = result(board, move)
-        if terminal(new_board):
-            util = utility(new_board)
-            states.append((move, util))
-        states.append((move,utility(result(new_board, minimax(new_board)))))
-    
-    if turn == 0:
-        return min(states, key=lambda x: x[1])[0]
     if turn == X:
-        return max(states, key=lambda x: x[1])[0]
+        return max_value(board)[1]
+    if turn == 0:
+        return min_value(board)[1]
+        
+                
+        
+    
+            
