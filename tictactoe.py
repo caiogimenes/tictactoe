@@ -99,30 +99,6 @@ def utility(board):
     else:
         return 0
     
-def max_value(board):
-    if terminal(board):
-        return (utility(board), '')
-    v = (float('-inf'), '')
-    for action in actions(board):
-        new_board = result(board, action)
-        v_temp = max(v, min_value(new_board)[0], key=lambda x: x[0])
-        if v_temp != v:
-            v = (v_temp, action)
-    
-    return v
-    
-def min_value(board):
-    if terminal(board):
-        return (utility(board), '')
-    v = (float('inf'), '')
-    for action in actions(board):
-        new_board = result(board, action)
-        v_temp = min(v, max_value(new_board)[0], key=lambda x: x[0])
-        if v_temp != v:
-            v = (v_temp, action)
-    
-    return v
-
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
@@ -130,13 +106,30 @@ def minimax(board):
     if terminal(board):
         return None
     
-    turn = player(board)
-    if turn == X:
-        return max_value(board)[1]
-    if turn == 0:
-        return min_value(board)[1]
-        
-                
-        
+    min_value = float('inf')
+    max_value = float('-inf')
     
+    turn = player(board)
+    
+    moves = actions(board)
+    best_move = ''
+    for move in moves:
+        next_board = result(board, move)
+        if turn == X:
+            if terminal(next_board):
+                v = utility(next_board)
+            else:
+                v = utility(result(next_board, minimax(next_board)))
+            if v > max_value:
+                max_value = v
+                best_move = move
             
+        if turn == O:
+            if terminal(next_board):
+                v = utility(next_board)
+            else:
+                v = utility(result(next_board, minimax(next_board)))
+            if v < min_value:
+                min_value = v
+                best_move = move
+    return best_move            
