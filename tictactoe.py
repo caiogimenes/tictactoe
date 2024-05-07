@@ -115,20 +115,19 @@ def minimax(board):
     best_move = ''
     for move in moves:
         next_board = result(board, move)
-        if turn == X:
-            if terminal(next_board):
-                v = utility(next_board)
-            else:
-                v = utility(result(next_board, minimax(next_board)))
+        while not terminal(next_board):
+            next_board = result(next_board, minimax(next_board))
+        v = utility(next_board)
+        if turn == X:  
+            if v == 1:
+                return move           
             if v > max_value:
                 max_value = v
                 best_move = move
             
         if turn == O:
-            if terminal(next_board):
-                v = utility(next_board)
-            else:
-                v = utility(result(next_board, minimax(next_board)))
+            if v == -1:
+                return move
             if v < min_value:
                 min_value = v
                 best_move = move
