@@ -106,29 +106,64 @@ def minimax(board):
     if terminal(board):
         return None
     
-    min_value = float('inf')
-    max_value = float('-inf')
+    best_move = None
     
-    turn = player(board)
+    def minimizer(board, alpha, beta):
+        """
+        Returns the minimal value for a state.
+        """
+        v = float('inf')
+        if terminal(board):
+            return utility(board)
+        for action in actions(board):
+            # New state generated from action
+            new_board = result(board, action)
+            # Update min value found between possible states from action
+            v = min(v, maximizer(new_board, alpha, beta))
+            # Update the min value found so far for the min player
+            beta = min(v, beta)
+            # Check if found best so far
+            if alpha >= beta:
+                break            
+                        
+        return v
     
-    moves = actions(board)
-    best_move = ''
-    for move in moves:
-        next_board = result(board, move)
-        while not terminal(next_board):
-            next_board = result(next_board, minimax(next_board))
-        v = utility(next_board)
-        if turn == X:  
-            if v == 1:
-                return move           
-            if v > max_value:
-                max_value = v
-                best_move = move
-            
-        if turn == O:
-            if v == -1:
-                return move
-            if v < min_value:
-                min_value = v
-                best_move = move
-    return best_move            
+    def maximizer(board, alpha, beta):
+        """
+        Returns the maximal value for a state.
+        """
+        v = float('-inf')
+        if terminal(board):
+            return utility(board)
+        for action in actions(board):
+            # New state generated from action
+            new_board = result(board, action)
+            # Update max value found between possible states from action
+            v = max(v, minimizer(new_board, alpha, beta))
+            # Update the max value found so far for the max player
+            alpha = max(v, alpha)
+            # Check if found best so far
+            if alpha >= beta:
+                break  
+                        
+        return v
+    
+    if player(board) == X:
+        max_value = float('-inf')
+        for action in actions(board):
+            action_eval = minimizer(result(board, action), alpha= float('-inf'), beta= float('inf'))
+            if max_value < action_eval:
+                max_value = action_eval
+                best_move = action
+        
+        return best_move
+
+    else:
+        min_value = float('inf')
+        for action in actions(board):
+            action_eval = maximizer(result(board, action), alpha= float('-inf'), beta= float('inf'))
+            if min_value > action_eval:
+                min_value = action_eval
+                best_move = action
+        
+        return best_move
