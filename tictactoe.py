@@ -40,11 +40,11 @@ def actions(board):
     """
     Returns set of all possible actions (i, j) available on the board.
     """
-    actions = []
+    actions = set()
     for i in range(3):
         for j in range(3):
             if board[i][j] == EMPTY:
-                actions.append((i,j))
+                actions.add((i,j))
         
     return actions
 
@@ -53,9 +53,11 @@ def result(board, action):
     Returns the board that results from making move (i, j) on the board.
     """
     board_temp = deepcopy(board)
-    if action:
+    if action and action in actions(board):
         board_temp[action[0]][action[1]] = player(board)
 
+    else:
+        raise Exception('Invalid move')
     return board_temp
 
 def winner(board):
